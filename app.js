@@ -3,7 +3,10 @@ const app = express();
 
 const { getEndpoints } = require("./controllers/endpoints.controllers");
 const { getTopics } = require("./controllers/topics.controllers");
-const { getArticleById } = require("./controllers/articles.controllers");
+const {
+  getArticles,
+  getArticleById,
+} = require("./controllers/articles.controllers");
 
 const {
   invalidAPIHandler,
@@ -15,6 +18,8 @@ const {
 app.get("/api", getEndpoints);
 
 app.get("/api/topics", getTopics);
+
+app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticleById);
 
