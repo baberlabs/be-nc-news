@@ -154,4 +154,74 @@ describe("/api/articles/:article_id/comments", () => {
         expect(message).toBe("Article Not Found"),
       );
   });
+
+  test("GET:400 get an error when article_id is invalid", () => {
+    return request(app)
+      .get("/api/articles/not-a-number/comments")
+      .expect(400)
+      .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
+  });
+
+  test("POST:201 add a comment for an article", () => {
+    return request(app)
+      .post("/api/articles/8/comments")
+      .send({
+        username: "lurker",
+        body: "Does look like Mitch! Maybe Mitch is an immortal vampire, living among us from ages old ~",
+      })
+      .expect(201)
+      .then(({ body: { comment } }) => {
+        expect(comment).toEqual({
+          comment_id: expect.any(Number),
+          body: "Does look like Mitch! Maybe Mitch is an immortal vampire, living among us from ages old ~",
+          article_id: 8,
+          author: "lurker",
+          votes: 0,
+          created_at: expect.any(String),
+        });
+      });
+  });
+
+  test("POST:404 get an error when article does not exist", () => {
+    return request(app)
+      .post("/api/articles/50/comments")
+      .send({
+        username: "lurker",
+        body: "random comment",
+      })
+      .expect(404)
+      .then(({ body: { message } }) =>
+        expect(message).toBe("Article Not Found"),
+      );
+  });
+
+  test("POST:404 get an error when username does not exist", () => {
+    return request(app)
+      .post("/api/articles/4/comments")
+      .send({
+        username: "baberlabs",
+        body: "another random comment",
+      })
+      .expect(404)
+      .then(({ body: { message } }) => expect(message).toBe("User Not Found"));
+  });
+
+  test("POST:400 get an error when article_id is invalid", () => {
+    return request(app)
+      .post("/api/articles/not-a-number/comments")
+      .send({
+        username: "baberlabs",
+        body: "some random comment",
+      })
+      .expect(400)
+      .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
+  });
+
+  test("POST:400 get an error when either username or body is missing", () => {
+    return request(app)
+      .post("/api/articles/4/comments")
+      .send({ body: "and another random comment" })
+      .expect(400)
+      .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
+  });
 });
