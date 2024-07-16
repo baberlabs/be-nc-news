@@ -4,7 +4,10 @@ const {
   formatComments,
 } = require("../db/seeds/utils");
 
-const { doesArticleExist } = require("../models/utils.models");
+const {
+  doesArticleExist,
+  doesCommentExist,
+} = require("../models/utils.models");
 
 const db = require("../db/connection");
 
@@ -110,15 +113,29 @@ describe("formatComments", () => {
 });
 
 describe("doesArticleExist", () => {
-  test("return true if article exists", () => {
+  test("return article_id if article exists", () => {
     return doesArticleExist(1).then((result) => expect(result).toBe(1));
   });
 
-  test("return false if article does not exist", () => {
+  test("return error object if article does not exist", () => {
     return doesArticleExist(50)
       .then()
       .catch((result) =>
         expect(result).toEqual({ status: 404, message: "Article Not Found" }),
+      );
+  });
+});
+
+describe("doesCommentExist", () => {
+  test("return comment_id if comment exists", () => {
+    return doesCommentExist(1).then((result) => expect(result).toBe(1));
+  });
+
+  test("return error object if comment does not exist", () => {
+    return doesCommentExist(50)
+      .then()
+      .catch((result) =>
+        expect(result).toEqual({ status: 404, message: "Comment Not Found" }),
       );
   });
 });
