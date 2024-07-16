@@ -10,11 +10,17 @@ exports.customErrorsHandler = (error, request, response, next) => {
 };
 
 exports.databaseErrorsHandler = (error, request, response, next) => {
-  const errorCodes = ["22P02"];
-  if (errorCodes.includes(error.code)) {
-    response.status(400).send({ message: "Bad Request" });
+  switch (error.code) {
+    case "22P02":
+    case "23502":
+      response.status(400).send({ message: "Bad Request" });
+      break;
+    case "23503":
+      response.status(404).send({ message: "User Not Found" });
+      break;
+    default:
+      next(error);
   }
-  next(error);
 };
 
 exports.serverErrorsHandler = (error, request, response, next) => {

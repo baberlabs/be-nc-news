@@ -58,5 +58,21 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "adds a comment for an article and returns the comment added",
+    "queries": [],
+    "exampleRequest": {
+      "username": "lurker",
+      "body": "Does look like Mitch! Maybe Mitch is an immortal vampire, living among us from ages old ~"
+    },
+    "exampleResponse": {
+      "comment_id": 19,
+      "body": "Does look like Mitch! Maybe Mitch is an immortal vampire, living among us from ages old ~",
+      "article_id": 8,
+      "author": "lurker",
+      "votes": 0,
+      "created_at": "2024-07-16T11:19:14.485Z"
+    }
   }
 }
