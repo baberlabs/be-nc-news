@@ -96,15 +96,73 @@ describe("/api/articles/:article_id", () => {
         });
       });
   });
+
   test("GET:404 article with this id does not exist", () => {
     return request(app)
       .get("/api/articles/1996")
       .expect(404)
-      .then(({ body: { message } }) => expect(message).toBe("Not Found"));
+      .then(({ body: { message } }) =>
+        expect(message).toBe("Article Not Found"),
+      );
   });
+
   test("GET:400 invalid article id", () => {
     return request(app)
       .get("/api/articles/not-a-number")
+      .expect(400)
+      .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
+  });
+
+  test("PATCH:200 update an article by id", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: 5000 })
+      .expect(200)
+      .then(({ body: { article } }) =>
+        expect(article).toEqual({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 5100,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        }),
+      );
+  });
+
+  test("PATCH:404 article id does not exist", () => {
+    return request(app)
+      .patch("/api/articles/50")
+      .send({ inc_votes: 5 })
+      .expect(404)
+      .then(({ body: { message } }) =>
+        expect(message).toBe("Article Not Found"),
+      );
+  });
+
+  test("PATCH:400 invalid article id", () => {
+    return request(app)
+      .patch("/api/articles/not-a-number")
+      .send({ inc_votes: 5 })
+      .expect(400)
+      .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
+  });
+
+  test("PATCH:400 request body is missing inc_votes", () => {
+    return request(app)
+      .patch("/api/articles/4")
+      .send({})
+      .expect(400)
+      .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
+  });
+
+  test("PATCH:400 inc_votes is not valid", () => {
+    return request(app)
+      .patch("/api/articles/4")
+      .send({ inc_votes: "not a number" })
       .expect(400)
       .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
   });

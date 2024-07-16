@@ -1,34 +1,24 @@
 const db = require("../db/connection");
-const { doesArticleExist } = require("../utils");
+const { doesArticleExist } = require("./utils.models");
 
 exports.fetchCommentsByArticleId = (article_id) => {
-  return doesArticleExist(article_id)
-    .then((result) => {
-      if (!result) {
-        return Promise.reject({ status: 404, message: "Article Not Found" });
-      }
-      return db.query(
-        `
+  return db
+    .query(
+      `
       SELECT *
       FROM comments
       WHERE article_id = $1
       ORDER BY created_at DESC
       `,
-        [article_id],
-      );
-    })
+      [article_id],
+    )
     .then(({ rows: comments }) => comments);
 };
 
-exports.insertComment = (article_id, { username, body }) => {
-  // console.log(article_id, author, body);
-  return doesArticleExist(article_id).then((result) => {
-    if (!result) {
-      return Promise.reject({ status: 404, message: "Article Not Found" });
-    }
-    return db
-      .query(
-        `
+exports.insertComment = (article_id, author, body) => {
+  return db
+    .query(
+      `
       INSERT INTO comments (
         body,
         article_id,
@@ -38,8 +28,7 @@ exports.insertComment = (article_id, { username, body }) => {
       ($1, $2, $3)
       RETURNING *
       `,
-        [body, article_id, username],
-      )
-      .then(({ rows: comments }) => comments[0]);
-  });
+      [body, article_id, author],
+    )
+    .then(({ rows: comments }) => comments[0]);
 };
