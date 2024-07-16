@@ -16,6 +16,8 @@ const {
   deleteCommentById,
 } = require("./controllers/comments.controllers");
 
+const { getUsers } = require("./controllers/users.controllers");
+
 const {
   invalidAPIHandler,
   customErrorsHandler,
@@ -40,6 +42,8 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentById);
 
 app.delete("/api/comments/:comment_id", deleteCommentById);
+
+app.get("/api/users", getUsers);
 
 app.all("*", invalidAPIHandler);
 
