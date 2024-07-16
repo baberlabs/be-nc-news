@@ -23,7 +23,7 @@ describe("/api", () => {
       .get("/api")
       .expect(200)
       .then(({ body: { endpoints } }) =>
-        expect(endpoints).toEqual(endpointData)
+        expect(endpoints).toEqual(endpointData),
       );
   });
 });
@@ -72,7 +72,7 @@ describe("/api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body: { articles } }) =>
-        expect(articles).toBeSortedBy("created_at", { descending: true })
+        expect(articles).toBeSortedBy("created_at", { descending: true }),
       );
   });
 });
@@ -107,5 +107,51 @@ describe("/api/articles/:article_id", () => {
       .get("/api/articles/not-a-number")
       .expect(400)
       .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
+  });
+});
+
+describe("/api/articles/:article_id/comments", () => {
+  test("GET:200 get all comments for an article, each with comment_id, body, article_id, author, votes and created_at property", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(11);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+            author: expect.any(String),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+          });
+        });
+      });
+  });
+
+  test("GET:200 comments should be served with the most recent comments first", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body: { comments } }) =>
+        expect(comments).toBeSortedBy("created_at", { descending: true }),
+      );
+  });
+
+  test("GET:200 get empty array when comments do not exist for an existing article", () => {
+    return request(app)
+      .get("/api/articles/4/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => expect(comments).toEqual([]));
+  });
+
+  test("GET:404 get an error when article does not exist", () => {
+    return request(app)
+      .get("/api/articles/50/comments")
+      .expect(404)
+      .then(({ body: { message } }) =>
+        expect(message).toBe("Article Not Found"),
+      );
   });
 });
