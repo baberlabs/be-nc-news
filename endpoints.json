@@ -60,19 +60,40 @@
     }
   },
   "POST /api/articles/:article_id/comments": {
-    "description": "adds a comment for an article and returns the comment added",
+    "description": "adds a comment for an article",
     "queries": [],
     "exampleRequest": {
       "username": "lurker",
       "body": "Does look like Mitch! Maybe Mitch is an immortal vampire, living among us from ages old ~"
     },
     "exampleResponse": {
-      "comment_id": 19,
-      "body": "Does look like Mitch! Maybe Mitch is an immortal vampire, living among us from ages old ~",
-      "article_id": 8,
-      "author": "lurker",
-      "votes": 0,
-      "created_at": "2024-07-16T11:19:14.485Z"
+      "comment": {
+        "comment_id": 19,
+        "body": "Does look like Mitch! Maybe Mitch is an immortal vampire, living among us from ages old ~",
+        "article_id": 8,
+        "author": "lurker",
+        "votes": 0,
+        "created_at": "2024-07-16T11:19:14.485Z"
+      }
+    }
+  },
+  "PATCH /api/articles/:article_id/comments": {
+    "description": "updates an article by article id",
+    "queries": [],
+    "exampleRequest": {
+      "inc_votes": 5000
+    },
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "Living in the shadow of a great man",
+        "topic": "mitch",
+        "author": "butter_bridge",
+        "body": "I find this existence challenging",
+        "created_at": "2020-07-09T20:11:00.000Z",
+        "votes": 5100,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+      }
     }
   }
 }
