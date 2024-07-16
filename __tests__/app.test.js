@@ -283,3 +283,25 @@ describe("/api/articles/:article_id/comments", () => {
       .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
   });
 });
+
+describe("/api/comments/:comment_id", () => {
+  test("DELETE:204 delete comment by id", () => {
+    return request(app).delete("/api/comments/2").expect(204);
+  });
+
+  test("DELETE:404 comment does not exist", () => {
+    return request(app)
+      .delete("/api/comments/1000")
+      .expect(404)
+      .then(({ body: { message } }) =>
+        expect(message).toBe("Comment Not Found"),
+      );
+  });
+
+  test("DELETE:400 invalid comment id", () => {
+    return request(app)
+      .delete("/api/comments/not-a-number")
+      .expect(400)
+      .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
+  });
+});
