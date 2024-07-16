@@ -4,6 +4,12 @@ const {
   formatComments,
 } = require("../db/seeds/utils");
 
+const { doesArticleExist } = require("../utils");
+
+const db = require("../db/connection");
+
+afterAll(() => db.end());
+
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
     const timestamp = 1557572706232;
@@ -100,5 +106,15 @@ describe("formatComments", () => {
     const comments = [{ created_at: timestamp }];
     const formattedComments = formatComments(comments, {});
     expect(formattedComments[0].created_at).toEqual(new Date(timestamp));
+  });
+});
+
+describe("doesArticleExist", () => {
+  test("return true if article exists", () => {
+    return doesArticleExist(1).then((result) => expect(result).toBe(true));
+  });
+
+  test("return false if article does not exist", () => {
+    return doesArticleExist(50).then((result) => expect(result).toBe(false));
   });
 });
