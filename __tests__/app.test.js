@@ -67,13 +67,32 @@ describe("/api/articles", () => {
         });
       });
   });
-  test("GET:200 articles are sorted by date in descending order", () => {
+
+  test("GET:200 articles are sorted by date in descending order (by default)", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
-      .then(({ body: { articles } }) =>
-        expect(articles).toBeSortedBy("created_at", { descending: true }),
-      );
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(13);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  test("GET:200 articles are sorted by any valid column", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&&order=asc")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(13);
+        expect(articles).toBeSortedBy("title", { descending: false });
+      });
+  });
+
+  test("GET:400 invalid sort_by or order query", () => {
+    return request(app)
+      .get("/api/articles?order=price")
+      .expect(400)
+      .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
   });
 });
 

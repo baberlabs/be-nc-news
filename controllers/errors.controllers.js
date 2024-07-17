@@ -15,6 +15,8 @@ exports.databaseErrorsHandler = (error, request, response, next) => {
     case "23502":
       response.status(400).send({ message: "Bad Request" });
       break;
+    case "42601":
+      response.status(400).send({ message: "Bad Request: Invalid Query" });
     case "23503":
       response.status(404).send({ message: "User Not Found" });
       break;
