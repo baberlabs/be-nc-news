@@ -1,6 +1,6 @@
 const db = require("../db/connection");
 
-exports.fetchArticles = (sort_by = "created_at", order = "desc") => {
+exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
   const whitelistSortBy = [
     "article_id",
     "title",
@@ -16,7 +16,10 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc") => {
   const whitelistOrder = ["asc", "desc"];
 
   if (!whitelistSortBy.includes(sort_by) || !whitelistOrder.includes(order)) {
-    return Promise.reject({ status: 400, message: "Bad Request" });
+    return Promise.reject({
+      status: 400,
+      message: "Bad Request: Invalid Query",
+    });
   }
 
   let queryString = `
@@ -40,15 +43,24 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc") => {
     USING (article_id)
     `;
 
+  const queryValues = [];
+
+  if (topic) {
+    queryString += ` WHERE topic = $1`;
+    queryValues.push(topic);
+  }
+
   if (whitelistSortBy.includes(sort_by)) {
-    queryString += `ORDER BY ${sort_by}`;
+    queryString += ` ORDER BY ${sort_by}`;
   }
 
   if (whitelistOrder.includes(order)) {
     queryString += `  ${order}`;
   }
 
-  return db.query(queryString).then(({ rows: articles }) => articles);
+  return db
+    .query(queryString, queryValues)
+    .then(({ rows: articles }) => articles);
 };
 
 exports.fetchArticleById = (article_id) => {
