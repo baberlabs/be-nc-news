@@ -65,8 +65,25 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
 
 exports.fetchArticleById = (article_id) => {
   const queryString = `
-    SELECT *
+    SELECT
+        articles.article_id,
+        articles.title,
+        articles.topic,
+        articles.author,
+        articles.body,
+        articles.created_at,
+        articles.votes,
+        articles.article_img_url,
+        COALESCE (comment_count, 0) :: INTEGER AS comment_count
     FROM articles
+    LEFT JOIN (
+        SELECT
+            article_id,
+            COUNT (comment_id) AS comment_count
+        FROM comments
+        GROUP BY article_id
+    )
+    USING (article_id)
     WHERE article_id = $1
     `;
   return db
