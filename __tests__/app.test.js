@@ -78,7 +78,17 @@ describe("/api/articles", () => {
       });
   });
 
-  test("GET:200 articles are sorted by any valid column", () => {
+  test("GET:200 articles accept sorting by any valid column", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(13);
+        expect(articles).toBeSortedBy("title", { descending: true });
+      });
+  });
+
+  test("GET:200 articles accept ordering by asc|desc", () => {
     return request(app)
       .get("/api/articles?sort_by=title&&order=asc")
       .expect(200)
@@ -88,11 +98,41 @@ describe("/api/articles", () => {
       });
   });
 
-  test("GET:400 invalid sort_by or order query", () => {
+  test("GET:200 articles accept filtering by topic", () => {
     return request(app)
-      .get("/api/articles?order=price")
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(12);
+        articles.forEach((article) => {
+          expect(article).toHaveProperty("topic", "mitch");
+        });
+      });
+  });
+
+  test("GET:400 responds with empty array if topic does not exist", () => {
+    return request(app)
+      .get("/api/articles?topic=invalid")
+      .expect(200)
+      .then(({ body: { articles } }) => expect(articles).toEqual([]));
+  });
+
+  test("GET:400 invalid sort_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=invalid")
       .expect(400)
-      .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
+      .then(({ body: { message } }) =>
+        expect(message).toBe("Bad Request: Invalid Query"),
+      );
+  });
+
+  test("GET:400 invalid order query", () => {
+    return request(app)
+      .get("/api/articles?order=invalid")
+      .expect(400)
+      .then(({ body: { message } }) =>
+        expect(message).toBe("Bad Request: Invalid Query"),
+      );
   });
 });
 
