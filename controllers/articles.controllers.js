@@ -7,7 +7,7 @@ const {
 const { doesArticleExist } = require("../models/utils.models");
 
 exports.getArticles = (request, response, next) => {
-  fetchArticles()
+  fetchArticles(request.query.sort_by, request.query.order)
     .then((articles) => response.status(200).send({ articles }))
     .catch(next);
 };

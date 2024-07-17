@@ -1,33 +1,54 @@
 const db = require("../db/connection");
 
-exports.fetchArticles = () => {
-  const queryString = `
+exports.fetchArticles = (sort_by = "created_at", order = "desc") => {
+  const whitelistSortBy = [
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "body",
+    "created_at",
+    "votes",
+    "article_img_url",
+    "comment_count",
+  ];
+
+  const whitelistOrder = ["asc", "desc"];
+
+  if (!whitelistSortBy.includes(sort_by) || !whitelistOrder.includes(order)) {
+    return Promise.reject({ status: 400, message: "Bad Request" });
+  }
+
+  let queryString = `
     SELECT
-        articles.author,
-        articles.title,
         articles.article_id,
+        articles.title,
         articles.topic,
+        articles.author,
         articles.created_at,
         articles.votes,
         articles.article_img_url,
-        COALESCE(comment_count, 0) AS comment_count
+        COALESCE (comment_count, 0) :: INTEGER AS comment_count
     FROM articles
     LEFT JOIN (
         SELECT
             article_id,
-            COUNT(comment_id) AS comment_count
+            COUNT (comment_id) AS comment_count
         FROM comments
         GROUP BY article_id
     )
     USING (article_id)
-    ORDER BY articles.created_at DESC
     `;
-  return db.query(queryString).then(({ rows: articles }) =>
-    articles.map((article) => ({
-      ...article,
-      comment_count: Number(article.comment_count),
-    })),
-  );
+
+  if (whitelistSortBy.includes(sort_by)) {
+    queryString += `ORDER BY ${sort_by}`;
+  }
+
+  if (whitelistOrder.includes(order)) {
+    queryString += `  ${order}`;
+  }
+
+  return db.query(queryString).then(({ rows: articles }) => articles);
 };
 
 exports.fetchArticleById = (article_id) => {

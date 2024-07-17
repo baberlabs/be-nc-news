@@ -27,6 +27,6 @@ exports.postCommentById = (request, response, next) => {
 exports.deleteCommentById = (request, response, next) => {
   doesCommentExist(request.params.comment_id)
     .then((comment_id) => removeCommentById(comment_id))
-    .then(() => response.status(204).send())
+    .then(() => response.sendStatus(204))
     .catch(next);
 };
