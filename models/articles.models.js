@@ -39,7 +39,7 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
             COUNT (comment_id) AS comment_count
         FROM comments
         GROUP BY article_id
-    )
+    ) AS comment_counts
     USING (article_id)
     `;
 
@@ -82,7 +82,7 @@ exports.fetchArticleById = (article_id) => {
             COUNT (comment_id) AS comment_count
         FROM comments
         GROUP BY article_id
-    )
+    ) AS comment_counts
     USING (article_id)
     WHERE article_id = $1
     `;
