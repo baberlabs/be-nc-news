@@ -31,6 +31,29 @@
       ]
     }
   },
+  "POST /api/articles": {
+    "description": "add a new article",
+    "queries": [],
+    "exampleRequest": {
+      "username": "lurker",
+      "title": "I don't always lurk",
+      "body": "Of course, I'd make you believe that. But the truth is indeed as your gut instinct says...",
+      "topic": "cats"
+    },
+    "exampleResponse": {
+      "article": {
+        "article_id": 14,
+        "title": "I don't always lurk",
+        "topic": "cats",
+        "author": "lurker",
+        "body": "Of course, I'd make you believe that. But the truth is indeed as your gut instinct says...",
+        "created_at": "2020-07-09T20:11:00.000Z",
+        "votes": 0,
+        "comment_count": 0,
+        "article_img_url": "https://defaulturl.com"
+      }
+    }
+  },
   "GET /api/articles/:article_id": {
     "description": "serves an article by its id",
     "queries": [],

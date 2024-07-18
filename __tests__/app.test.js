@@ -134,6 +134,79 @@ describe("/api/articles", () => {
         expect(message).toBe("Bad Request: Invalid Query"),
       );
   });
+
+  // for POST:201 /api/articles
+  //
+  // Although the ticket says to use 'author', I am using
+  // 'username' because that's what I've been using in
+  // all the previous post and patch requests.
+  //
+  // 'username' in the request body, and
+  // 'author' in the response we get from model
+  //
+  // Being consistent!
+
+  test("POST:201 add a new article", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        username: "lurker",
+        title: "I don't always lurk",
+        body: "Of course, I'd make you believe that. But the truth is indeed as your gut instinct says...",
+        topic: "cats",
+      })
+      .expect(201)
+      .then(({ body: { article } }) => {
+        expect(article).toMatchObject({
+          article_id: 14,
+          title: "I don't always lurk",
+          topic: "cats",
+          author: "lurker",
+          body: "Of course, I'd make you believe that. But the truth is indeed as your gut instinct says...",
+          created_at: expect.any(String),
+          votes: 0,
+          comment_count: 0,
+          article_img_url: "https://defaulturl.com",
+        });
+      });
+  });
+
+  test("POST:404 user not found", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        username: "not-a-user",
+        title: "I don't always lurk",
+        body: "Of course, I'd make you believe that. But the truth is indeed as your gut instinct says...",
+        topic: "cats",
+      })
+      .expect(404)
+      .then(({ body: { message } }) => expect(message).toBe("User Not Found"));
+  });
+
+  test("POST:404 topic not found", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        username: "lurker",
+        title: "I don't always lurk",
+        body: "Of course, I'd make you believe that. But the truth is indeed as your gut instinct says...",
+        topic: "not-a-topic",
+      })
+      .expect(404)
+      .then(({ body: { message } }) => expect(message).toBe("Topic Not Found"));
+  });
+
+  test("POST:400 missing any property in the request body: author, title, body or topic", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        username: "lurker",
+        topic: "cats",
+      })
+      .expect(400)
+      .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
+  });
 });
 
 describe("/api/articles/:article_id", () => {
