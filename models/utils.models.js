@@ -6,14 +6,7 @@ const db = require("../db/connection");
 
 exports.doesArticleExist = (article_id) => {
   return db
-    .query(
-      `
-      SELECT *
-      FROM articles
-      WHERE article_id = $1
-      `,
-      [article_id],
-    )
+    .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
     .then(({ rows: articles }) => {
       if (!articles.length) {
         return Promise.reject({ status: 404, message: "Article Not Found" });
@@ -24,18 +17,22 @@ exports.doesArticleExist = (article_id) => {
 
 exports.doesCommentExist = (comment_id) => {
   return db
-    .query(
-      `
-      SELECT *
-      FROM comments
-      WHERE comment_id = $1
-      `,
-      [comment_id],
-    )
+    .query(`SELECT * FROM comments WHERE comment_id = $1`, [comment_id])
     .then(({ rows: comments }) => {
       if (!comments.length) {
         return Promise.reject({ status: 404, message: "Comment Not Found" });
       }
       return comments[0].comment_id;
+    });
+};
+
+exports.doesUserExist = (username) => {
+  return db
+    .query(`SELECT * FROM users WHERE username = $1`, [username])
+    .then(({ rows: users }) => {
+      if (!users.length) {
+        return Promise.reject({ status: 404, message: "User Not Found" });
+      }
+      return users[0].username;
     });
 };
