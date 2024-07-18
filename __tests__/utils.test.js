@@ -7,6 +7,7 @@ const {
 const {
   doesArticleExist,
   doesCommentExist,
+  doesUserExist,
 } = require("../models/utils.models");
 
 const db = require("../db/connection");
@@ -136,6 +137,22 @@ describe("doesCommentExist", () => {
       .then()
       .catch((result) =>
         expect(result).toEqual({ status: 404, message: "Comment Not Found" }),
+      );
+  });
+});
+
+describe("doesUserExist", () => {
+  test("return username if user exists", () => {
+    return doesUserExist("lurker").then((result) =>
+      expect(result).toBe("lurker"),
+    );
+  });
+
+  test("return error object if user does not exist", () => {
+    return doesUserExist("not-a-user")
+      .then()
+      .catch((result) =>
+        expect(result).toEqual({ status: 404, message: "User Not Found" }),
       );
   });
 });
