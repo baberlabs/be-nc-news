@@ -102,3 +102,28 @@ exports.updateArticleByArticleId = (article_id, inc_votes) => {
     .query(queryString, [inc_votes, article_id])
     .then(({ rows: articles }) => articles[0]);
 };
+
+exports.insertArticle = (
+  username,
+  title,
+  body,
+  topic,
+  article_img_url = "https://defaulturl.com",
+) => {
+  return db
+    .query(
+      `
+      INSERT INTO articles (
+        author,
+        title,
+        body,
+        topic,
+        article_img_url
+      )
+      VALUES ( $1, $2, $3, $4, $5 )
+      RETURNING *
+      `,
+      [username, title, body, topic, article_img_url],
+    )
+    .then(({ rows: articles }) => ({ ...articles[0], comment_count: 0 }));
+};

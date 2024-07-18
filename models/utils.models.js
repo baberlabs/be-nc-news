@@ -36,3 +36,14 @@ exports.doesUserExist = (username) => {
       return users[0].username;
     });
 };
+
+exports.doesTopicExist = (slug) => {
+  return db
+    .query(`SELECT * FROM topics WHERE slug = $1`, [slug])
+    .then(({ rows: topics }) => {
+      if (!topics.length) {
+        return Promise.reject({ status: 404, message: "Topic Not Found" });
+      }
+      return topics[0].slug;
+    });
+};
