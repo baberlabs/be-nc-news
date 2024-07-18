@@ -1,7 +1,7 @@
 const {
   fetchArticles,
-  fetchArticleById,
-  updateArticleById,
+  fetchArticleByArticleId,
+  updateArticleByArticleId,
 } = require("../models/articles.models");
 
 const { doesArticleExist } = require("../models/utils.models");
@@ -13,16 +13,18 @@ exports.getArticles = (request, response, next) => {
     .catch(next);
 };
 
-exports.getArticleById = (request, response, next) => {
+exports.getArticleByArticleId = (request, response, next) => {
   doesArticleExist(request.params.article_id)
-    .then((article_id) => fetchArticleById(article_id))
+    .then((article_id) => fetchArticleByArticleId(article_id))
     .then((article) => response.status(200).send({ article }))
     .catch(next);
 };
 
-exports.patchArticleById = (request, response, next) => {
+exports.patchArticleByArticleId = (request, response, next) => {
   doesArticleExist(request.params.article_id)
-    .then((article_id) => updateArticleById(article_id, request.body.inc_votes))
+    .then((article_id) =>
+      updateArticleByArticleId(article_id, request.body.inc_votes),
+    )
     .then((article) => response.status(200).send({ article }))
     .catch(next);
 };

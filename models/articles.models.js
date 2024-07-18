@@ -63,7 +63,7 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
     .then(({ rows: articles }) => articles);
 };
 
-exports.fetchArticleById = (article_id) => {
+exports.fetchArticleByArticleId = (article_id) => {
   const queryString = `
     SELECT
         articles.article_id,
@@ -91,7 +91,7 @@ exports.fetchArticleById = (article_id) => {
     .then(({ rows: articles }) => articles[0]);
 };
 
-exports.updateArticleById = (article_id, inc_votes) => {
+exports.updateArticleByArticleId = (article_id, inc_votes) => {
   const queryString = `
     UPDATE articles
     SET votes = votes + $1
