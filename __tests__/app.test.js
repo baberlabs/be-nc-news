@@ -364,6 +364,50 @@ describe("/api/comments/:comment_id", () => {
       .expect(400)
       .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
   });
+
+  test("PATCH:200 update the votes on a comment by comment_id", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: 5 })
+      .expect(200)
+      .then(
+        ({ body: { comment } }) => expect(comment.votes).toBe(21), // originally 16
+      );
+  });
+
+  test("PATCH:404 comment does not exist", () => {
+    return request(app)
+      .patch("/api/comments/150")
+      .send({ inc_votes: 5 })
+      .expect(404)
+      .then(({ body: { message } }) =>
+        expect(message).toBe("Comment Not Found"),
+      );
+  });
+
+  test("PATCH:400 invalid comment id", () => {
+    return request(app)
+      .patch("/api/comments/not-a-number")
+      .send({ inc_votes: 5 })
+      .expect(400)
+      .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
+  });
+
+  test("PATCH:400 inc_votes is missing", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({})
+      .expect(400)
+      .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
+  });
+
+  test("PATCH:400 inc_votes is not a number", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: "not-a-number" })
+      .expect(400)
+      .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
+  });
 });
 
 describe("/api/users", () => {
