@@ -1,7 +1,7 @@
 const {
   fetchCommentsByArticleId,
-  insertCommentById,
-  removeCommentById,
+  insertCommentByArticleId,
+  removeCommentByArticleId,
 } = require("../models/comments.models");
 
 const {
@@ -16,17 +16,17 @@ exports.getCommentsByArticleId = (request, response, next) => {
     .catch(next);
 };
 
-exports.postCommentById = (request, response, next) => {
+exports.postCommentByArticleId = (request, response, next) => {
   const { username, body } = request.body;
   doesArticleExist(request.params.article_id)
-    .then((article_id) => insertCommentById(article_id, username, body))
+    .then((article_id) => insertCommentByArticleId(article_id, username, body))
     .then((comment) => response.status(201).send({ comment }))
     .catch(next);
 };
 
-exports.deleteCommentById = (request, response, next) => {
+exports.deleteCommentByArticleId = (request, response, next) => {
   doesCommentExist(request.params.comment_id)
-    .then((comment_id) => removeCommentById(comment_id))
+    .then((comment_id) => removeCommentByArticleId(comment_id))
     .then(() => response.sendStatus(204))
     .catch(next);
 };

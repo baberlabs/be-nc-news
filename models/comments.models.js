@@ -15,7 +15,7 @@ exports.fetchCommentsByArticleId = (article_id) => {
     .then(({ rows: comments }) => comments);
 };
 
-exports.insertCommentById = (article_id, author, body) => {
+exports.insertCommentByArticleId = (article_id, author, body) => {
   return db
     .query(
       `
@@ -33,7 +33,7 @@ exports.insertCommentById = (article_id, author, body) => {
     .then(({ rows: comments }) => comments[0]);
 };
 
-exports.removeCommentById = (comment_id) => {
+exports.removeCommentByArticleId = (comment_id) => {
   return db.query(
     `
     DELETE FROM comments
