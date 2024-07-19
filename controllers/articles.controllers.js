@@ -9,12 +9,16 @@ const {
   doesArticleExist,
   doesUserExist,
   doesTopicExist,
+  countArticles,
 } = require("../models/utils.models");
 
 exports.getArticles = (request, response, next) => {
-  const { sort_by, order, topic } = request.query;
-  fetchArticles(sort_by, order, topic)
-    .then((articles) => response.status(200).send({ articles }))
+  const { sort_by, order, topic, limit, page } = request.query;
+  fetchArticles(sort_by, order, topic, limit, page)
+    .then((articles) => Promise.all([articles, countArticles(topic)]))
+    .then(([articles, total_count]) => {
+      response.status(200).send({ articles, total_count });
+    })
     .catch(next);
 };
 

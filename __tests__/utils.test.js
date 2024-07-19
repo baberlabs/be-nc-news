@@ -9,6 +9,7 @@ const {
   doesCommentExist,
   doesUserExist,
   doesTopicExist,
+  countArticles,
 } = require("../models/utils.models");
 
 const db = require("../db/connection");
@@ -179,5 +180,15 @@ describe("doesTopicExist", () => {
       .catch((result) =>
         expect(result).toEqual({ status: 404, message: "Topic Not Found" }),
       );
+  });
+});
+
+describe("countArticles", () => {
+  test("return the count of articles", () => {
+    return countArticles().then((count) => expect(count).toBe(13));
+  });
+
+  test("return the count of articles with 'topic' query", () => {
+    return countArticles("mitch").then((count) => expect(count).toBe(12));
   });
 });

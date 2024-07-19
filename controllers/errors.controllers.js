@@ -5,8 +5,9 @@ exports.invalidAPIHandler = (request, response, next) => {
 exports.customErrorsHandler = (error, request, response, next) => {
   if (error.status && error.message) {
     response.status(error.status).send({ message: error.message });
+  } else {
+    next(error);
   }
-  next(error);
 };
 
 exports.databaseErrorsHandler = (error, request, response, next) => {

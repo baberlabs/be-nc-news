@@ -1,6 +1,12 @@
 const db = require("../db/connection");
 
-exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
+exports.fetchArticles = (
+  sort_by = "created_at",
+  order = "desc",
+  topic,
+  limit = 10,
+  page = 1,
+) => {
   const whitelistSortBy = [
     "article_id",
     "title",
@@ -55,8 +61,17 @@ exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
   }
 
   if (whitelistOrder.includes(order)) {
-    queryString += `  ${order}`;
+    queryString += ` ${order}`;
   }
+
+  if (!/[\d+]/.test(limit) || !/[\d+]/.test(page)) {
+    return Promise.reject({
+      status: 400,
+      message: "Bad Request: Invalid Query",
+    });
+  }
+
+  queryString += ` LIMIT ${limit} OFFSET ${(page - 1) * limit}`;
 
   return db
     .query(queryString, queryValues)
