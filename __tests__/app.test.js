@@ -43,6 +43,33 @@ describe("/api/topics", () => {
         });
       });
   });
+
+  test("POST:201 add a new topic", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({
+        slug: "baber",
+        description: "Senior Software Developer at Google LLC, 2032",
+      })
+      .expect(201)
+      .then(({ body: { topic } }) =>
+        expect(topic).toEqual({
+          slug: "baber",
+          description: "Senior Software Developer at Google LLC, 2032",
+        }),
+      );
+  });
+
+  test("POST:400 'slug' property is missing", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({
+        description:
+          "Oh no, the slug was too slow to catch the Request Train, and now we're all going to die!",
+      })
+      .expect(400)
+      .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
+  });
 });
 
 describe("/api/articles", () => {
