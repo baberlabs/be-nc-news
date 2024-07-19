@@ -47,3 +47,17 @@ exports.doesTopicExist = (slug) => {
       return topics[0].slug;
     });
 };
+
+exports.countArticles = (topic) => {
+  let queryString = `SELECT COUNT(article_id) :: INTEGER AS total_count FROM articles`;
+  let queryValues = [];
+
+  if (topic) {
+    queryString += ` WHERE topic = $1`;
+    queryValues.push(topic);
+  }
+
+  return db
+    .query(queryString, queryValues)
+    .then(({ rows }) => rows[0].total_count);
+};

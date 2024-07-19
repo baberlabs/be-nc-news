@@ -46,12 +46,13 @@ describe("/api/topics", () => {
 });
 
 describe("/api/articles", () => {
-  test("GET:200 get all articles", () => {
+  test("GET:200 get articles (default to 10)", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
-      .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(13);
+      .then(({ body: { articles, total_count } }) => {
+        expect(total_count).toBe(13);
+        expect(articles.length).toBe(10);
         articles.forEach((article) => {
           expect(article).not.toHaveProperty("body");
           expect(article).toMatchObject({
@@ -72,9 +73,30 @@ describe("/api/articles", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
-      .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(13);
+      .then(({ body: { articles, total_count } }) => {
+        expect(total_count).toBe(13);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  test("GET:200 articles accept limit query (default to 10)", () => {
+    return request(app)
+      .get("/api/articles?limit=4")
+      .expect(200)
+      .then(({ body: { articles, total_count } }) => {
+        expect(total_count).toBe(13);
+        expect(articles.length).toBe(4);
+      });
+  });
+
+  test("GET:200 articles accept page query", () => {
+    return request(app)
+      .get("/api/articles?page=2")
+      .expect(200)
+      .then(({ body: { articles, total_count } }) => {
+        expect(total_count).toBe(13);
+        expect(articles.length).toBe(3);
       });
   });
 
@@ -82,8 +104,9 @@ describe("/api/articles", () => {
     return request(app)
       .get("/api/articles?sort_by=title")
       .expect(200)
-      .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(13);
+      .then(({ body: { articles, total_count } }) => {
+        expect(total_count).toBe(13);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy("title", { descending: true });
       });
   });
@@ -92,8 +115,9 @@ describe("/api/articles", () => {
     return request(app)
       .get("/api/articles?sort_by=title&&order=asc")
       .expect(200)
-      .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(13);
+      .then(({ body: { articles, total_count } }) => {
+        expect(total_count).toBe(13);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy("title", { descending: false });
       });
   });
@@ -102,8 +126,9 @@ describe("/api/articles", () => {
     return request(app)
       .get("/api/articles?topic=mitch")
       .expect(200)
-      .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(12);
+      .then(({ body: { articles, total_count } }) => {
+        expect(total_count).toBe(12);
+        expect(articles.length).toBe(10);
         articles.forEach((article) => {
           expect(article).toHaveProperty("topic", "mitch");
         });
@@ -135,16 +160,23 @@ describe("/api/articles", () => {
       );
   });
 
-  // for POST:201 /api/articles
-  //
-  // Although the ticket says to use 'author', I am using
-  // 'username' because that's what I've been using in
-  // all the previous post and patch requests.
-  //
-  // 'username' in the request body, and
-  // 'author' in the response we get from model
-  //
-  // Being consistent!
+  test("GET:400 invalid limit query", () => {
+    return request(app)
+      .get("/api/articles?limit=not-a-number")
+      .expect(400)
+      .then(({ body: { message } }) =>
+        expect(message).toBe("Bad Request: Invalid Query"),
+      );
+  });
+
+  test("GET:400 invalid page query", () => {
+    return request(app)
+      .get("/api/articles?page=not-a-number")
+      .expect(400)
+      .then(({ body: { message } }) =>
+        expect(message).toBe("Bad Request: Invalid Query"),
+      );
+  });
 
   test("POST:201 add a new article", () => {
     return request(app)
