@@ -25,5 +25,6 @@ exports.databaseErrorsHandler = (error, request, response, next) => {
 };
 
 exports.serverErrorsHandler = (error, request, response, next) => {
+  console.log(error);
   response.status(500).send({ message: "Internal Server Error" });
 };

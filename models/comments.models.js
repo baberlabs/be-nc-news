@@ -1,16 +1,21 @@
 const db = require("../db/connection");
 
-exports.fetchCommentsByArticleId = (article_id) => {
+exports.fetchCommentsByArticleId = (article_id, limit = 10, page = 1) => {
+  let queryString = `
+    SELECT *
+    FROM comments
+    WHERE article_id = $1
+    ORDER BY created_at DESC
+    `;
+
+  if (!/^\d+$/.test(limit) || !/^\d+$/.test(page)) {
+    return Promise.reject({ status: 400, message: "Bad Request" });
+  }
+
+  queryString += `LIMIT ${limit} OFFSET ${(page - 1) * limit}`;
+
   return db
-    .query(
-      `
-      SELECT *
-      FROM comments
-      WHERE article_id = $1
-      ORDER BY created_at DESC
-      `,
-      [article_id],
-    )
+    .query(queryString, [article_id])
     .then(({ rows: comments }) => comments);
 };
 

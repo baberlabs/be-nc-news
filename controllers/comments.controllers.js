@@ -8,12 +8,18 @@ const {
 const {
   doesArticleExist,
   doesCommentExist,
+  countComments,
 } = require("../models/utils.models");
 
-exports.getCommentsByArticleId = (request, response, next) => {
-  doesArticleExist(request.params.article_id)
-    .then((article_id) => fetchCommentsByArticleId(article_id))
-    .then((comments) => response.status(200).send({ comments }))
+exports.getCommentsByArticleId = async (request, response, next) => {
+  const { article_id } = request.params;
+  const { limit, page } = request.query;
+  doesArticleExist(article_id)
+    .then(() => fetchCommentsByArticleId(article_id, limit, page))
+    .then((comments) => Promise.all([comments, countComments(article_id)]))
+    .then(([comments, total_count]) => {
+      response.status(200).send({ comments, total_count });
+    })
     .catch(next);
 };
 

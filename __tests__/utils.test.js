@@ -10,6 +10,7 @@ const {
   doesUserExist,
   doesTopicExist,
   countArticles,
+  countComments,
 } = require("../models/utils.models");
 
 const db = require("../db/connection");
@@ -190,5 +191,15 @@ describe("countArticles", () => {
 
   test("return the count of articles with 'topic' query", () => {
     return countArticles("mitch").then((count) => expect(count).toBe(12));
+  });
+});
+
+describe("countComments", () => {
+  test("return the count of comments", () => {
+    return countComments().then((count) => expect(count).toBe(18));
+  });
+
+  test("return the count of comments by article_id", () => {
+    return countComments("1").then((count) => expect(count).toBe(11));
   });
 });

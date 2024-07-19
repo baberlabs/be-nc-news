@@ -64,7 +64,7 @@ exports.fetchArticles = (
     queryString += ` ${order}`;
   }
 
-  if (!/[\d+]/.test(limit) || !/[\d+]/.test(page)) {
+  if (!/^\d+$/.test(limit) || !/^\d+$/.test(page)) {
     return Promise.reject({
       status: 400,
       message: "Bad Request: Invalid Query",

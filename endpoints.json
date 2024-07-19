@@ -28,7 +28,8 @@
           "votes": 0,
           "comment_count": 6
         }
-      ]
+      ],
+      "total_count": 20
     }
   },
   "POST /api/articles": {
@@ -68,7 +69,7 @@
   },
   "GET /api/articles/:article_id/comments": {
     "description": "serves all the comments of an article",
-    "queries": [],
+    "queries": ["limit", "page"],
     "exampleResponse": {
       "comments": [
         {
@@ -79,7 +80,8 @@
           "votes": 0,
           "created_at": "2020-01-01T03:08:00.000Z"
         }
-      ]
+      ],
+      "total_count": 13
     }
   },
   "POST /api/articles/:article_id/comments": {
