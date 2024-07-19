@@ -37,7 +37,7 @@ exports.insertCommentByArticleId = (article_id, author, body) => {
     .then(({ rows: comments }) => comments[0]);
 };
 
-exports.removeCommentByArticleId = (comment_id) => {
+exports.removeCommentByCommentId = (comment_id) => {
   return db.query(
     `
     DELETE FROM comments
@@ -59,4 +59,14 @@ exports.updateCommentByCommentId = (comment_id, inc_votes) => {
       [inc_votes, comment_id],
     )
     .then(({ rows: comments }) => comments[0]);
+};
+
+exports.removeCommentsByArticleId = (article_id) => {
+  return db.query(
+    `
+    DELETE FROM comments
+    WHERE article_id = $1
+    `,
+    [article_id],
+  );
 };

@@ -358,6 +358,26 @@ describe("/api/articles/:article_id", () => {
       .expect(400)
       .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
   });
+
+  test("DELETE:204 delete an article by its id and its respective comments", () => {
+    return request(app).delete("/api/articles/1").expect(204);
+  });
+
+  test("DELETE:404 article id does not exist", () => {
+    return request(app)
+      .delete("/api/articles/96")
+      .expect(404)
+      .then(({ body: { message } }) =>
+        expect(message).toBe("Article Not Found"),
+      );
+  });
+
+  test("DELETE:400 invalid article id", () => {
+    return request(app)
+      .delete("/api/articles/not-a-number")
+      .expect(400)
+      .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {

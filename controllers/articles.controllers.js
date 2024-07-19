@@ -3,13 +3,17 @@ const {
   fetchArticleByArticleId,
   updateArticleByArticleId,
   insertArticle,
+  removeArticleByArticleId,
 } = require("../models/articles.models");
+
+const { removeCommentsByArticleId } = require("../models/comments.models");
 
 const {
   doesArticleExist,
   doesUserExist,
   doesTopicExist,
   countArticles,
+  doesCommentExist,
 } = require("../models/utils.models");
 
 exports.getArticles = (request, response, next) => {
@@ -43,5 +47,14 @@ exports.postArticle = (request, response, next) => {
     .then(() => doesTopicExist(topic))
     .then(() => insertArticle(username, title, body, topic, article_img_url))
     .then((article) => response.status(201).send({ article }))
+    .catch(next);
+};
+
+exports.deleteArticleByArticleId = (request, response, next) => {
+  const { article_id } = request.params;
+  doesArticleExist(article_id)
+    .then(() => removeCommentsByArticleId(article_id))
+    .then(() => removeArticleByArticleId(article_id))
+    .then(() => response.sendStatus(204))
     .catch(next);
 };
