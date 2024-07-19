@@ -334,12 +334,13 @@ describe("/api/articles/:article_id", () => {
 });
 
 describe("/api/articles/:article_id/comments", () => {
-  test("GET:200 get all comments for an article, each with comment_id, body, article_id, author, votes and created_at property", () => {
+  test("GET:200 get comments for an article (default to 10)", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
-      .then(({ body: { comments } }) => {
-        expect(comments.length).toBe(11);
+      .then(({ body: { comments, total_count } }) => {
+        expect(total_count).toBe(11);
+        expect(comments.length).toBe(10);
         comments.forEach((comment) => {
           expect(comment).toMatchObject({
             comment_id: expect.any(Number),
@@ -350,6 +351,26 @@ describe("/api/articles/:article_id/comments", () => {
             created_at: expect.any(String),
           });
         });
+      });
+  });
+
+  test("GET:200 should accept 'limit' query", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=4")
+      .expect(200)
+      .then(({ body: { comments, total_count } }) => {
+        expect(total_count).toBe(11);
+        expect(comments.length).toBe(4);
+      });
+  });
+
+  test("GET:200 should accept 'page' query", () => {
+    return request(app)
+      .get("/api/articles/1/comments?page=2")
+      .expect(200)
+      .then(({ body: { comments, total_count } }) => {
+        expect(total_count).toBe(11);
+        expect(comments.length).toBe(1);
       });
   });
 
@@ -381,6 +402,13 @@ describe("/api/articles/:article_id/comments", () => {
   test("GET:400 get an error when article_id is invalid", () => {
     return request(app)
       .get("/api/articles/not-a-number/comments")
+      .expect(400)
+      .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
+  });
+
+  test("GET:400 get an error when invalid 'page' or 'limit' query", () => {
+    return request(app)
+      .get("/api/articles/1/comments?page=invalid123")
       .expect(400)
       .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
   });

@@ -61,3 +61,17 @@ exports.countArticles = (topic) => {
     .query(queryString, queryValues)
     .then(({ rows }) => rows[0].total_count);
 };
+
+exports.countComments = (article_id) => {
+  let queryString = `SELECT COUNT(comment_id) :: INTEGER AS total_count FROM comments`;
+  let queryValues = [];
+
+  if (article_id) {
+    queryString += ` WHERE article_id = $1`;
+    queryValues.push(article_id);
+  }
+
+  return db
+    .query(queryString, queryValues)
+    .then(({ rows }) => rows[0].total_count);
+};
