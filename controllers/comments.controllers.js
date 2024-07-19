@@ -1,7 +1,7 @@
 const {
   fetchCommentsByArticleId,
   insertCommentByArticleId,
-  removeCommentByArticleId,
+  removeCommentByCommentId,
   updateCommentByCommentId,
 } = require("../models/comments.models");
 
@@ -31,9 +31,9 @@ exports.postCommentByArticleId = (request, response, next) => {
     .catch(next);
 };
 
-exports.deleteCommentByArticleId = (request, response, next) => {
+exports.deleteCommentByCommentId = (request, response, next) => {
   doesCommentExist(request.params.comment_id)
-    .then((comment_id) => removeCommentByArticleId(comment_id))
+    .then((comment_id) => removeCommentByCommentId(comment_id))
     .then(() => response.sendStatus(204))
     .catch(next);
 };

@@ -142,3 +142,7 @@ exports.insertArticle = (
     )
     .then(({ rows: articles }) => ({ ...articles[0], comment_count: 0 }));
 };
+
+exports.removeArticleByArticleId = (article_id) => {
+  return db.query(`DELETE FROM articles WHERE article_id = $1`, [article_id]);
+};
