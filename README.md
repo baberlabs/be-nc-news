@@ -1,19 +1,15 @@
 # Northcoders News API
 
-This portfolio project was created as part of a Digital Skills Bootcamp in Software Development provided by [Northcoders](https://northcoders.com/)
+As part of the backend project, I built the [Northcoders News API](https://be-nc-news-8igb.onrender.com/api/) API using Express and PostgreSQL and deployed it using Supabase and Render. This API mimics a real-world backend service, such as Reddit, with users, articles, comments, and topics.
 
-[See the live app](https://be-nc-news-8igb.onrender.com/api/)
+> The front end of this project will start in three weeks. (To Be Continued)
 
+## Requirements
 
-## Summary
+- Node 22.3.0
+- PostgreSQL 16.3
 
-[Northcoders News API](https://be-nc-news-8igb.onrender.com/api/) that mimics a real-world backend service, such as Reddit, with users, articles, comments, topics, etc.
-
-As part of the backend project, we built an API using Express and PostgreSQL, and deployed it using Supabase and Render.
-
-The frontend of this project will start in three weeks time.
-
-(To Be Continued)
+It may or may not work with other versions of Node and PostgreSQL.
 
 ## Setup Instructions
 
@@ -71,10 +67,10 @@ $ npm run test
 
 This project currently has the following endpoints:
 
-- `GET /api`: get more information regarding all endpoints availabe
+- `GET /api`: get more information regarding all endpoints available
 - `GET /api/topics`: get all topics
-- `GET /api/articles`: get all articles
-- `GET /api/articles/:article_id`: get an article by article id
+- `GET /api/articles`: get all articles (queries: sort_by, order, topic, limit, page)
+- `GET /api/articles/:article_id`: get an article by article id (queries: limit, page)
 - `PATCH /api/articles/:article_id`: update an article by article id
 - `GET /api/comments/:comment_id`: get a comment by article id
 - `POST /api/comments/:comment_id`: post a comment by article id
@@ -87,3 +83,7 @@ And that's it! You should now be able to work on this project.
 ## Author
 
 - **Baber Khan** - [GitHub](https://github.com/baberlabs) - [LinkedIn](https://linkedin.com/in/baberr) - [Personal Website](https://baberr.com) - [WhatsApp](https://wa.me/+447438234827)
+
+## Acknowledgements
+
+This portfolio project was created as part of a Digital Skills Bootcamp in Software Development provided by [Northcoders](https://northcoders.com)
