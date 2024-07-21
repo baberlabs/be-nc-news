@@ -162,11 +162,11 @@ describe("/api/articles", () => {
       });
   });
 
-  test("GET:400 responds with empty array if topic does not exist", () => {
+  test("GET:404 topic does not exist", () => {
     return request(app)
       .get("/api/articles?topic=invalid")
-      .expect(200)
-      .then(({ body: { articles } }) => expect(articles).toEqual([]));
+      .expect(404)
+      .then(({ body: { message } }) => expect(message).toBe("Topic Not Found"));
   });
 
   test("GET:400 invalid sort_by query", () => {
