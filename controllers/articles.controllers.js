@@ -18,7 +18,11 @@ const {
 
 exports.getArticles = (request, response, next) => {
   const { sort_by, order, topic, limit, page } = request.query;
-  fetchArticles(sort_by, order, topic, limit, page)
+  Promise.resolve()
+    .then(() => {
+      if (topic) return doesTopicExist(topic);
+    })
+    .then(() => fetchArticles(sort_by, order, topic, limit, page))
     .then((articles) => Promise.all([articles, countArticles(topic)]))
     .then(([articles, total_count]) => {
       response.status(200).send({ articles, total_count });
