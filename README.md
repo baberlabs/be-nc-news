@@ -1,89 +1,155 @@
-# Northcoders News API
+# NC News API
 
-As part of the backend project, I built the [Northcoders News API](https://be-nc-news-8igb.onrender.com/api/) API using Express and PostgreSQL and deployed it using Supabase and Render. This API mimics a real-world backend service, such as Reddit, with users, articles, comments, and topics.
+A production-style REST API for a news aggregation platform, designed around explicit SQL, relational integrity, and predictable failure modes.
 
-> The front end of this project will start in three weeks. (To Be Continued)
+Built with **Node.js**, **Express**, and **PostgreSQL**, with full test coverage and defensive error handling.
 
-## Requirements
+This API exposes articles, topics, users, and comments, supporting filtering, sorting, pagination, and resource mutation, all backed by a relational schema with enforced integrity.
 
-- Node 22.3.0
-- PostgreSQL 16.3
+---
 
-It may or may not work with other versions of Node and PostgreSQL.
+## Live API
 
-## Setup Instructions
+**Base URL**  
+https://be-nc-news-8igb.onrender.com/api
 
-### 1. Clone the project
+Note: The hosted instance may experience cold starts due to free-tier hosting constaints
 
-```bash
-$ git clone https://github.com/baberlabs/be-nc-news.git
+**Available endpoints index**
+
+```http
+GET /api
 ```
 
-### 2. Install dependencies
+Returns a structured list of available routes, expected queries, and example responses.
 
-```bash
-$ npm install
+---
+
+## What This API Does
+
+- Serves articles with comment counts, sorting, filtering, and pagination
+- Allows clients to create, update, and delete articles and comments
+- Exposes users and topics as first-class resources
+- Returns consistent, meaningful HTTP status codes
+- Fails loudly and predictably when clients misbehave
+
+This API is designed to behave like a deployable service rather than a demonstration stub.
+
+---
+
+## Core Features
+
+- Full CRUD for **articles** and **comments**
+- Topic and user retrieval
+- Query-driven sorting (`sort_by`, `order`)
+- Pagination with total count metadata (`limit`, `page`)
+- Centralised error handling
+- Comprehensive integration test suite
+
+---
+
+## Tech Stack
+
+- **Runtime:** Node.js
+- **Framework:** Express
+- **Database:** PostgreSQL
+- **Query Layer:** `pg` (node-postgres)
+- **Testing:** Jest, Supertest
+- **Hosting:**
+  - API: Render
+  - Database: Supabase (PostgreSQL)
+
+---
+
+## API Structure
+
+All endpoints are namespaced under `/api`.
+
+| Resource         | Endpoints                            |
+| ---------------- | ------------------------------------ |
+| Topics           | `/api/topics`                        |
+| Articles         | `/api/articles`                      |
+| Single Article   | `/api/articles/:article_id`          |
+| Article Comments | `/api/articles/:article_id/comments` |
+| Single Comment   | `/api/comments/:comment_id`          |
+| Users            | `/api/users`                         |
+| Single User      | `/api/users/:username`               |
+
+For request/response schemas and supported query parameters, see:
+
+```http
+GET /api
 ```
 
-### 3. Create .env files
-One will be for testing and another for development.
+---
+
+## Local Development
+
+### Prerequisites
+
+- Node.js (LTS recommended)
+- PostgreSQL
+
+---
+
+### Setup
+
+Clone the repository and install dependencies:
 
 ```bash
-$ echo "PGDATABASE=nc_news" > .env.development
-$ echo "PGDATABASE=nc_news_test" > .env.test
+git clone https://github.com/baberlabs/be-nc-news.git
+cd be-nc-news
+npm install
 ```
 
-
-### 6. Run the database setup script
+Create environment files:
 
 ```bash
-$ npm run setup-dbs
+echo "PGDATABASE=nc_news" > .env.development
+echo "PGDATABASE=nc_news_test" > .env.test
 ```
 
-### 7. Seed the database
-
-For the tests, there is no need to seed the database explicitly. Running the test will reseed the test database for each test automatically.
-
-For development purposes, the development database can be seeded using:
+Create and seed the databases:
 
 ```bash
-$ npm run seed
+npm run setup-dbs
+npm run seed
 ```
 
-### 8. Start the server
+Start the server:
 
 ```bash
-$ npm run start
+npm start
 ```
 
-### 9. Run tests
+---
+
+## Running Tests
 
 ```bash
-$ npm run test
+npm test
 ```
 
+Test behaviour:
 
-## Endpoints
+- Database is reseeded before each test run
+- Integration tests cover all routes and error cases
+- Connections are closed cleanly after execution
 
-This project currently has the following endpoints:
+---
 
-- `GET /api`: get more information regarding all endpoints available
-- `GET /api/topics`: get all topics
-- `GET /api/articles`: get all articles (queries: sort_by, order, topic, limit, page)
-- `GET /api/articles/:article_id`: get an article by article id (queries: limit, page)
-- `PATCH /api/articles/:article_id`: update an article by article id
-- `GET /api/comments/:comment_id`: get a comment by article id
-- `POST /api/comments/:comment_id`: post a comment by article id
-- `DELETE /api/comments/:comment_id`: delete a comment by article id
-- `GET /api/users`: get all users
+## Design Decisions
 
+- **Explicit SQL** over ORMs for predictability and clarity
+- **Separation of concerns** between routes, controllers, and models
+- **Defensive validation** for queries, params, and request bodies
+- **Centralised error middleware** to keep controllers readable
+- **Relational integrity enforced at the database level**
 
-And that's it! You should now be able to work on this project.
+The code prioritises correctness and readability over cleverness.
 
-## Author
-
-- **Baber Khan** - [GitHub](https://github.com/baberlabs) - [LinkedIn](https://linkedin.com/in/baberr) - [Personal Website](https://baberr.com) - [WhatsApp](https://wa.me/+447438234827)
+---
 
 ## Acknowledgements
 
-This portfolio project was created as part of a Digital Skills Bootcamp in Software Development provided by [Northcoders](https://northcoders.com)
+This project was developed as part of a **Digital Skills Bootcamp in Software Development** delivered by **Northcoders**, a UK-based training provider.
